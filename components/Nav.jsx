@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
+import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 const Nav = () => {
   const { data: session } = useSession();
@@ -26,7 +26,7 @@ const Nav = () => {
           alt="logo"
           width={250}
           height={0}
-          style={{ objectFit: 'contain' }}
+          style={{ objectFit: "contain" }}
         />
       </Link>
 
@@ -58,22 +58,24 @@ const Nav = () => {
           </div>
         ) : (
           <>
-            <Link href="/create-prompt" className="outline_btn">
-              Pricing
-            </Link>
-            {providers &&
-              Object.values(providers).map((provider) => (
-                <button
-                  type="button"
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
-                  className="black_btn"
-                >
-                  Sign in
-                </button>
-              ))}
+            <div className="flex gap-3 md:gap-5">
+              <Link href="/create-prompt" className="outline_btn">
+                Pricing
+              </Link>
+              {providers &&
+                Object.values(providers).map((provider) => (
+                  <button
+                    type="button"
+                    key={provider.name}
+                    onClick={() => {
+                      signIn(provider.id);
+                    }}
+                    className="black_btn"
+                  >
+                    Sign in
+                  </button>
+                ))}
+            </div>
           </>
         )}
       </div>

@@ -38,7 +38,7 @@ const Nav = () => {
               Generate
             </Link>
 
-            <Link href="/create-prompt" className="outline_btn">
+            <Link href="/" className="outline_btn">
               Pricing
             </Link>
 
@@ -59,7 +59,7 @@ const Nav = () => {
         ) : (
           <>
             <div className="flex gap-3 md:gap-5">
-              <Link href="/create-prompt" className="outline_btn">
+              <Link href="/" className="outline_btn">
                 Pricing
               </Link>
               {providers &&

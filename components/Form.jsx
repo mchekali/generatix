@@ -1,15 +1,15 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import Link from "next/link";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
   const [guidanceScale, setGuidanceScale] = useState(0);
   const [numInferenceSteps, setNumInferenceSteps] = useState(0);
   const [promptStrength, setPromptStrength] = useState(0);
-  const [prompt, setPrompt] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [prompt, setPrompt] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [generatedImage, setGeneratedImage] = useState(null);
   const [upscaledImage, setUpscaledImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,8 +31,6 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      console.log(imageUrl);
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedImage(reader.result);
@@ -96,7 +94,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
                         ></path>
                       </svg>
                       <p className="mb-2 text-sm">
-                        <span className="font-semibold">Click to upload</span>{' '}
+                        <span className="font-semibold">Click to upload</span>{" "}
                         or drag and drop Image
                       </p>
                       <p className="text-xs">PNG or JPG</p>
@@ -210,7 +208,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
                       <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-48 p-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
                         This is like the number of steps the AI takes to refine
                         the design. More steps can lead to a more detailed and
-                        polished result, but it might take longer to process.{' '}
+                        polished result, but it might take longer to process.{" "}
                         <br />
                         Default value: 7.5 <br />
                         Explanation: This is a balanced value that ensures the
@@ -308,7 +306,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
             {/* Input field */}
             <input
               type="text"
-              value={selectedImage || ''}
+              value=""
               readOnly
               className="mb-2 p-2 border border-gray-300 rounded-lg"
               placeholder="Image URL will appear here"
@@ -344,7 +342,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
                 width={0}
                 sizes="100vw"
                 className="w-full h-auto rounded-t-xl"
-                style={{ objectFit: 'cover' }}
+                style={{ objectFit: "cover" }}
               />
               <span className="absolute top-2 left-2 bg-black text-white px-2 py-1 rounded-md text-sm">
                 AFTER

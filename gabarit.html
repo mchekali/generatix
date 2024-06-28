@@ -1,0 +1,368 @@
+<div className="w-full h-full flex flex-col items-center bg-bg-color text-white flex-grow">
+    <div className="h-full relative w-full flex lg:flex-row flex-col">
+        <div
+            className="w-full relative p-6 lg:h-screen-16 py-6 lg:overflow-y-auto lg:max-w-xs lg:mr-1 lg:pr-4 lg:border-r border-neutral-700">
+            <div className="flex justify-center py-1 bg-neutral-800 border border-neutral-700 rounded-lg"><img
+                    alt="tokens" className="w-6" src="/credits.png">0</div>
+            <div className="file-uploader"></div>
+            <div className="flex h-10 justify-center my-2 py-1 bg-neutral-800 border border-neutral-700 rounded-lg">
+                <button
+                    className="w-1/2 ml-2 mr-1 transition-colors duration-300 rounded-lg ease-in-out bg-blue-600 text-white">Upscale</button><button
+                    className="w-1/2 ml-1 mr-2 transition-colors duration-300 rounded-lg ease-in-out text-neutral-300 hover:bg-neutral-700 hover:text-white">Style-transfer</button>
+            </div>
+            <p className="font-bold mt-6 mb-2">Input image</p>
+            <div
+                className="flex flex-col items-center justify-center w-full h-32 border border-neutral-700 border-dashed rounded-lg cursor-pointer bg-neutral-800 hover:bg-neutral-700">
+                <label htmlFor="dropzone-file" className="w-full h-full">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6"><svg
+                            className="w-8 h-8 mb-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2">
+                            </path>
+                        </svg>
+                        <p className="mb-2 text-sm text-white"><span className="font-semibold">Click to upload</span> or
+                            drag
+                            and drop</p>
+                        <p className="text-xs text-white">PNG or JPG</p>
+                    </div>
+                </label><input type="file" id="dropzone-file" className="hidden">
+            </div>
+            <p className="font-bold mt-6 mb-2">Prompt (optional)</p><textarea id="prompt" type="text" rows="3"
+                className="bg-neutral-800 w-full border border-neutral-700 text-white text-sm rounded-lg block p-2.5"></textarea>
+            <div>
+                <div>
+                    <div className="flex items-center mt-6">
+                        <p className="font-bold my-2 mr-2">Creativity</p>
+                        <div className="cursor-pointer"><svg fill="white" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32">
+                                <title>info</title>
+                                <path
+                                    d="M14 9.5c0-0.825 0.675-1.5 1.5-1.5h1c0.825 0 1.5 0.675 1.5 1.5v1c0 0.825-0.675 1.5-1.5 1.5h-1c-0.825 0-1.5-0.675-1.5-1.5v-1z">
+                                </path>
+                                <path d="M20 24h-8v-2h2v-6h-2v-2h6v8h2z"></path>
+                                <path
+                                    d="M16 0c-8.837 0-16 7.163-16 16s7.163 16 16 16 16-7.163 16-16-7.163-16-16-16zM16 29c-7.18 0-13-5.82-13-13s5.82-13 13-13 13 5.82 13 13-5.82 13-13 13z">
+                                </path>
+                            </svg></div>
+                    </div>
+                    <div className="grid items-center"><input
+                            className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" type="range" min="-10" max="10"
+                            step="1" value="0"><span className="justify-self-end">0</span>
+                    </div>
+                </div>
+                <div>
+                    <div className="flex items-center">
+                        <p className="font-bold my-2 mr-2">Resemblance</p>
+                        <div className="cursor-pointer"><svg fill="white" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32">
+                                <title>info</title>
+                                <path
+                                    d="M14 9.5c0-0.825 0.675-1.5 1.5-1.5h1c0.825 0 1.5 0.675 1.5 1.5v1c0 0.825-0.675 1.5-1.5 1.5h-1c-0.825 0-1.5-0.675-1.5-1.5v-1z">
+                                </path>
+                                <path d="M20 24h-8v-2h2v-6h-2v-2h6v8h2z"></path>
+                                <path
+                                    d="M16 0c-8.837 0-16 7.163-16 16s7.163 16 16 16 16-7.163 16-16-7.163-16-16-16zM16 29c-7.18 0-13-5.82-13-13s5.82-13 13-13 13 5.82 13 13-5.82 13-13 13z">
+                                </path>
+                            </svg></div>
+                    </div>
+                    <div className="grid items-center"><input
+                            className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" type="range" min="-10" max="10"
+                            step="1" value="0"><span className="justify-self-end">0</span>
+                    </div>
+                </div>
+                <div>
+                    <div className="flex items-center">
+                        <p className="font-bold my-2 mr-2 mt-2">Dynamic</p>
+                        <div className="cursor-pointer"><svg fill="white" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32">
+                                <title>info</title>
+                                <path
+                                    d="M14 9.5c0-0.825 0.675-1.5 1.5-1.5h1c0.825 0 1.5 0.675 1.5 1.5v1c0 0.825-0.675 1.5-1.5 1.5h-1c-0.825 0-1.5-0.675-1.5-1.5v-1z">
+                                </path>
+                                <path d="M20 24h-8v-2h2v-6h-2v-2h6v8h2z"></path>
+                                <path
+                                    d="M16 0c-8.837 0-16 7.163-16 16s7.163 16 16 16 16-7.163 16-16-7.163-16-16-16zM16 29c-7.18 0-13-5.82-13-13s5.82-13 13-13 13 5.82 13 13-5.82 13-13 13z">
+                                </path>
+                            </svg></div>
+                    </div>
+                    <div className="grid items-center"><input
+                            className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" type="range" min="-10" max="10"
+                            step="1" value="0"><span className="justify-self-end">0</span>
+                    </div>
+                </div>
+                <div>
+                    <div className="flex items-center">
+                        <p className="font-bold my-2 mr-2 mt-2">Fractality</p>
+                        <div className="cursor-pointer"><svg fill="white" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32">
+                                <title>info</title>
+                                <path
+                                    d="M14 9.5c0-0.825 0.675-1.5 1.5-1.5h1c0.825 0 1.5 0.675 1.5 1.5v1c0 0.825-0.675 1.5-1.5 1.5h-1c-0.825 0-1.5-0.675-1.5-1.5v-1z">
+                                </path>
+                                <path d="M20 24h-8v-2h2v-6h-2v-2h6v8h2z"></path>
+                                <path
+                                    d="M16 0c-8.837 0-16 7.163-16 16s7.163 16 16 16 16-7.163 16-16-7.163-16-16-16zM16 29c-7.18 0-13-5.82-13-13s5.82-13 13-13 13 5.82 13 13-5.82 13-13 13z">
+                                </path>
+                            </svg></div>
+                    </div>
+                    <div className="grid items-center"><input
+                            className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" type="range" min="-10" max="10"
+                            step="1" value="0"><span className="justify-self-end">0</span>
+                    </div>
+                </div>
+                <div>
+                    <div className="flex items-center">
+                        <p className="font-bold my-2 mr-2 mt-2">Style</p>
+                    </div><select
+                        className="bg-neutral-800 w-full border border-neutral-700 text-white text-sm rounded-lg block p-2.5">
+                        <option value="default">Default</option>
+                        <option value="portrait">Portrait</option>
+                        <option value="anime">Anime</option>
+                    </select>
+                </div>
+                <div className="mt-4">
+                    <div>
+                        <div className="flex items-center">
+                            <p className="font-bold my-2 mr-2 mt-2">Scale factor</p>
+                        </div><select
+                            className="bg-neutral-800 w-full border border-neutral-700 text-white text-sm rounded-lg block p-2.5">
+                            <option value="2">x2</option>
+                            <option value="4">x4</option>
+                            <option value="6">x6</option>
+                            <option value="8">x8</option>
+                            <option value="10">x10</option>
+                            <option value="12">x12</option>
+                            <option value="14">x14</option>
+                            <option value="16">x16</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="mt-4">
+                    <div>
+                        <div className="flex items-center">
+                            <p className="font-bold my-2 mr-2 mt-2">Pattern</p>
+                            <div className="cursor-pointer"><svg fill="white" version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32">
+                                    <title>info</title>
+                                    <path
+                                        d="M14 9.5c0-0.825 0.675-1.5 1.5-1.5h1c0.825 0 1.5 0.675 1.5 1.5v1c0 0.825-0.675 1.5-1.5 1.5h-1c-0.825 0-1.5-0.675-1.5-1.5v-1z">
+                                    </path>
+                                    <path d="M20 24h-8v-2h2v-6h-2v-2h6v8h2z"></path>
+                                    <path
+                                        d="M16 0c-8.837 0-16 7.163-16 16s7.163 16 16 16 16-7.163 16-16-7.163-16-16-16zM16 29c-7.18 0-13-5.82-13-13s5.82-13 13-13 13 5.82 13 13-5.82 13-13 13z">
+                                    </path>
+                                </svg></div>
+                        </div><label className="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                className="sr-only peer">
+                            <div
+                                className="relative w-11 h-6 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all border-gray-600 peer-checked:bg-blue-600">
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div><button type="submit"
+                className="mt-8 w-full h-12 rounded-lg font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-500 via-purple-500 hover:from-black hover:border hover:border-white hover:bg-black hover:text-white background-animate">
+                <div className="flex flex-row place-content-center"><span> Upscale with ClarityAI</span></div>
+            </button>
+        </div>
+        <div className="h-full w-full px-6 py-6 lg:h-screen-16 lg:overflow-y-auto lg:overflow-x-hidden">
+            <div className="h-full">
+                <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
+                    <div className="relative group">
+                        <div className="image-slider relative">
+                            <div className="absolute z-10 flex w-full bottom-0  justify-between pointer-events-none p-4"
+                                style={{width: '1078px' }}>
+                                <div className="flex flex-row items-end pointer-events-auto"><button
+                                        className="p-2 bg-black/70 flex flex-row items-center rounded-full mr-1.5"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 384 512" fill="white">
+                                            <path
+                                                d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM216 232V334.1l31-31c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-72 72c-9.4 9.4-24.6 9.4-33.9 0l-72-72c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l31 31V232c0-13.3 10.7-24 24-24s24 10.7 24 24z">
+                                            </path>
+                                        </svg></button><button
+                                        className="p-2 bg-black/70 flex flex-row items-center rounded-full"><svg
+                                            fill="white" stroke="white" width="19" height="19" stroke-width="1.5"
+                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5">
+                                            </path>
+                                        </svg></button><button
+                                        className="p-[6px] bg-black/70 flex flex-row items-center rounded-full ml-1.5"><svg
+                                            width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10 11V17" stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M14 11V17" stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M4 7H20" stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path
+                                                d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z"
+                                                stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
+                                                stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg></button></div>
+                                <div
+                                    className="md:visible invisible flex flex-col items-end justify-end ml-10 pointer-events-auto">
+                                    <div className="flex"></div>
+                                    <div className="flex">
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Creativity</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Resemblance</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Dynamic</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Style</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Fractality</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">x</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style={{overflow: 'hidden' , cursor: 'default' }}><img-comparison-slider
+                                    className="rendered" tabIndex="0">
+                                    <figure slot="first" className="relative"><img
+                                            alt="Original low-resolution AI image of a jungle"
+                                            src="/images/14_before.jpg" className="w-full rounded-lg"
+                                            style={{transform: 'scale(1)' 'translate(0px)' ,
+                                            transition: 'transform 0.1s' }}>
+                                        <div
+                                            className="absolute text-xs text-black bg-white/70 rounded-xl font-bold px-3 py-1 top-4 left-4">
+                                            Before</div>
+                                    </figure>
+                                    <figure slot="second" className="relative"><img
+                                            alt="Upscaled and enhanced image with AI of a jungle"
+                                            src="/images/14_after.jpg" className="w-full rounded-lg"
+                                            style={{transform: 'scale(1)' 'translate(0px)' ,
+                                            transition: 'transform 0.1s' }}>
+                                        <div
+                                            className="absolute text-xs text-white rounded-xl font-bold px-3 py-1 top-4 right-4 bg-gradient-to-r via-blue-500  to-emerald-600 from-sky-400 background-animate">
+                                            After</div>
+                                    </figure>
+                                </img-comparison-slider></div>
+                        </div>
+                    </div>
+                    <div className="relative group">
+                        <div className="image-slider relative">
+                            <div className="absolute z-10 flex w-full bottom-0  justify-between pointer-events-none p-4"
+                                style={{width: '1078px' }}>
+                                <div className="flex flex-row items-end pointer-events-auto"><button
+                                        className="p-2 bg-black/70 flex flex-row items-center rounded-full mr-1.5"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 384 512" fill="white">
+                                            <path
+                                                d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM216 232V334.1l31-31c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-72 72c-9.4 9.4-24.6 9.4-33.9 0l-72-72c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l31 31V232c0-13.3 10.7-24 24-24s24 10.7 24 24z">
+                                            </path>
+                                        </svg></button><button
+                                        className="p-2 bg-black/70 flex flex-row items-center rounded-full"><svg
+                                            fill="white" stroke="white" width="19" height="19" stroke-width="1.5"
+                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5">
+                                            </path>
+                                        </svg></button><button
+                                        className="p-[6px] bg-black/70 flex flex-row items-center rounded-full ml-1.5"><svg
+                                            width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10 11V17" stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M14 11V17" stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M4 7H20" stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path
+                                                d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z"
+                                                stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
+                                                stroke="white" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg></button></div>
+                                <div
+                                    className="md:visible invisible flex flex-col items-end justify-end ml-10 pointer-events-auto">
+                                    <div className="flex"></div>
+                                    <div className="flex">
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Creativity</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Resemblance</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Dynamic</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Style</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">Fractality</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center px-2 py-1 bg-black/70 rounded-xl mr-2 last:mr-0">
+                                            <span className="text-xs text-neutral-400 mr-1.5">x</span><span
+                                                className="text-xs font-bold text-white">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style={{overflow: 'hidden' ; cursor: 'default' }}><img-comparison-slider
+                                    className="rendered" tabIndex="0">
+                                    <figure slot="first" className="relative"><img
+                                            alt="Original low-resolution AI image of a cat"
+                                            src="https://r2.clarityai.co/inputs/e364851c-87d3-4c5d-bfb2-7f119926b88e-candidate_b_small_screenshot.jpg"
+                                            className="w-full rounded-lg" style={{transform: 'scale(1)' 'translate(0px)'
+                                            , transition: 'transform 0.1s' }}>
+                                        <div
+                                            className="absolute text-xs text-black bg-white/70 rounded-xl font-bold px-3 py-1 top-4 left-4">
+                                            Before</div>
+                                    </figure>
+                                    <figure slot="second" className="relative"><img
+                                            alt="Upscaled and enhanced image with AI of a cat"
+                                            src="https://replicate.delivery/pbxt/0JiM2h2KWeViAa85CIKTjia0SJPVrCRgjqKP8byHS4GYzwbJA/1337-e4ce447a-19b5-11ef-82df-ea6d108d94ef.jpg"
+                                            className="w-full rounded-lg" style={{transform: 'scale(1)' 'translate(0px)'
+                                            , transition: 'transform 0.1s' }}>
+                                        <div
+                                            className="absolute text-xs text-white rounded-xl font-bold px-3 py-1 top-4 right-4 bg-gradient-to-r via-blue-500  to-emerald-600 from-sky-400 background-animate">
+                                            After</div>
+                                    </figure>
+                                </img-comparison-slider></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

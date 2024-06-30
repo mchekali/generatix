@@ -6,13 +6,13 @@ import fs from "fs";
 import cookieParser from "cookie-parser";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
-import userRoutes from "./routes/userRoutes.js";
-import qaRoutes from "./routes/qaRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js"; // Import the new upload route
 
 dotenv.config();
 
 const port = process.env.PORT || 3000;
+
+import userRoutes from "./routes/userRoutes.js";
+import qaRoutes from "./routes/qaRoutes.js";
 
 connectDB();
 
@@ -31,36 +31,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS middleware
-app.use((req, res, next) => {
-  const allowedOrigins = ["https://www.remedeasy.com", "https://localhost"];
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS",
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
-
-  // Handle preflight requests
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
-
 app.use("/node/users", userRoutes);
 app.use("/node/qa", qaRoutes);
-app.use("/node/upload", uploadRoutes); // Use the new upload route
 
 app.get("/", (req, res) => res.send("Server is running"));
 

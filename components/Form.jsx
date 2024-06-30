@@ -5,15 +5,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
-  const [guidanceScale, setGuidanceScale] = useState(0);
-  const [numInferenceSteps, setNumInferenceSteps] = useState(0);
-  const [promptStrength, setPromptStrength] = useState(0);
-  const [prompt, setPrompt] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [generatedImage, setGeneratedImage] = useState(null);
-  const [upscaledImage, setUpscaledImage] = useState(null);
+  const [guidanceScale, setGuidanceScale] = useState(50);
+  const [numInferenceSteps, setNumInferenceSteps] = useState(15);
+  const [promptStrength, setPromptStrength] = useState(0.8);
   const [loading, setLoading] = useState(false);
-
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleGuidanceScaleChange = (event) => {
@@ -219,17 +214,8 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
                   </label>
                   <div className="flex items-center mt-2">
                     <input
-                      className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
+                      className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer show-spin-buttons"
                       type="range"
-                      min="1"
-                      max="500"
-                      step="1"
-                      value={numInferenceSteps}
-                      onChange={handleNumInferenceStepsChange}
-                    />
-                    <input
-                      className="w-16 ml-2 p-1 bg-gray-200 rounded-lg border border-gray-400"
-                      type="number"
                       min="1"
                       max="500"
                       step="1"
@@ -265,7 +251,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
                   </label>
                   <div className="flex items-center mt-2">
                     <input
-                      className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
+                      className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer show-spin-buttons"
                       type="range"
                       min="0"
                       max="1"
@@ -274,7 +260,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
                       onChange={handlePromptStrengthChange}
                     />
                     <input
-                      className="w-16 ml-2 p-1 bg-gray-200 rounded-lg border border-gray-400"
+                      className="w-16 ml-2 p-1 bg-gray-200 rounded-lg border border-gray-400 show-spin-buttons"
                       type="number"
                       min="0"
                       max="1"
@@ -296,7 +282,21 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
                 />
                 Generate
               </button>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-5 py-1.5 text-sm bg-primary-orange rounded-full text-white"
+              >
+                {submitting ? `${type}ing...` : type}
+              </button>
             </form>
+
+            {loading && (
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <ClipLoader color="#123abc" loading={loading} size={50} />
+              </div>
+            )}
           </div>
 
           {/* Second column (4/5) */}

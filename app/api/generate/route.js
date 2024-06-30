@@ -1,4 +1,4 @@
-export const maxDuration = 160;
+export const maxDuration = 60;
 
 import { NextResponse } from "next/server";
 // import { replicateRun } from "@/utils/replicate";

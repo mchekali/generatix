@@ -99,7 +99,7 @@ input[type="range"]::-moz-range-thumb {
 } */
 
 .black_btn {
-  @apply rounded-full border border-black bg-black py-1.5 px-5 text-white transition-all hover:bg-white hover:text-black text-center text-sm font-inter flex items-center justify-center;
+  @apply rounded-full border border-black bg-black py-1.5 px-5 text-black transition-all hover:bg-white hover:text-black text-center text-sm font-inter flex items-center justify-center;
 }
 
 .outline_btn {
@@ -149,7 +149,7 @@ input[type="range"]::-moz-range-thumb {
 
 /* Form Component */
 .form_textarea {
-  @apply w-full flex rounded-lg h-[100px] mt-2 p-3 text-sm text-black outline-0;
+  @apply w-full flex rounded-lg h-[80px] mt-2 p-3 text-sm text-gray-300 outline-0;
 }
 
 .form_input {
@@ -189,3 +189,22 @@ input[type="range"]::-moz-range-thumb {
 .flex-between {
   @apply flex justify-between items-center;
 }
+
+/* Dark mode styles */
+.dark body {
+  @apply bg-gray-700 text-white; /* Lighten the background */
+}
+
+.dark .prompt_card {
+  @apply bg-gray-600 border-gray-500; /* Lighten the background */
+}
+
+.dark .navlinks:hover {
+  @apply text-white bg-gray-500; /* Lighten the hover background */
+}
+
+.dark .navbutton:hover {
+  @apply bg-gray-500 text-white; /* Lighten the hover background */
+}
+
+/* Add more dark mode styles as needed */

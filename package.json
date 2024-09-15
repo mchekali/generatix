@@ -13,6 +13,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "bcrypt": "^5.1.1",
+    "framer-motion": "^11.5.2",
+    "lottie-web": "^5.12.2",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.3",
     "next": "14.2.4",
@@ -20,7 +22,9 @@
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-lottie": "^1.2.4",
     "react-spinners": "^0.14.1",
+    "react-tabs": "^6.0.2",
     "replicate": "^0.30.2"
   },
   "devDependencies": {

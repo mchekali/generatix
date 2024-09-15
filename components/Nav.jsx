@@ -4,141 +4,83 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { motion } from "framer-motion";
 
 const Nav = () => {
   const { data: session } = useSession();
-
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
-    (async () => {
-      const res = await getProviders();
-      setProviders(res);
-    })();
+    const setUpProviders = async () => {
+      const response = await getProviders();
+      setProviders(response);
+    };
+    setUpProviders();
   }, []);
 
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
   return (
-    <nav className="flex-between w-full mb-2 p-3">
-      <Link href="/" className="flex gap-2 flex-center">
-        <Image
-          src="/assets/images/generate_logo.png"
-          alt="logo"
-          width={250}
-          height={0}
-          style={{ objectFit: "contain" }}
-        />
-      </Link>
-
-      {/* Desktop Navigation */}
-      <div className="sm:flex hidden">
-        {session?.user ? (
-          <div className="flex gap-3 md:gap-5">
-            <Link href="/create-prompt" className="black_btn">
-              Generate
-            </Link>
-
-            <Link href="/" className="outline_btn">
-              Pricing
-            </Link>
-
-            <button type="button" onClick={signOut} className="outline_btn">
-              Sign Out
-            </button>
-
-            <Link href="/profile">
-              <Image
-                src={session?.user.image}
-                width={37}
-                height={37}
-                className="rounded-full"
-                alt="profile"
-              />
-            </Link>
-          </div>
-        ) : (
-          <>
-            <div className="flex gap-3 md:gap-5">
-              <Link href="/" className="outline_btn">
-                Pricing
+    <nav className="navbar" data-headlessui-state="">
+      <div className="mx-auto max-w-7xl lg:px-8">
+        <div className="relative flex items-center">
+          <div className="flex flex-1 items-center sm:justify-between">
+            <div className="flex flex-shrink-0 items-center border-right">
+              <Link href="/" className="flex-shrink-0">
+                <Image
+                  src="/assets/images/logo-white-transparent.png"
+                  alt="Logo"
+                  width={150}
+                  height={20}
+                />
               </Link>
-              {providers &&
-                Object.values(providers).map((provider) => (
-                  <button
-                    type="button"
-                    key={provider.name}
-                    onClick={() => {
-                      signIn(provider.id);
-                    }}
-                    className="black_btn"
-                  >
-                    Sign in
-                  </button>
-                ))}
             </div>
-          </>
-        )}
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="sm:hidden flex relative">
-        {session?.user ? (
-          <div className="flex">
-            <Image
-              src={session?.user.image}
-              width={37}
-              height={37}
-              className="rounded-full"
-              alt="profile"
-              onClick={() => setToggleDropdown(!toggleDropdown)}
-            />
-
-            {toggleDropdown && (
-              <div className="dropdown">
+            <div className="hidden lg:flex items-center border-right">
+              <div className="flex justify-end space-x-4">
                 <Link
-                  href="/profile"
-                  className="dropdown_link"
-                  onClick={() => setToggleDropdown(false)}
+                  href="/pricing"
+                  className="navlinks hover:text-white hover:bg-gray-500 px-3 py-4 rounded-md text-smlg font-normal"
                 >
-                  My Profile
+                  Pricing
                 </Link>
                 <Link
-                  href="/create-prompt"
-                  className="dropdown_link"
-                  onClick={() => setToggleDropdown(false)}
+                  href="/signin"
+                  className="navlinks hover:text-white hover:bg-gray-500 px-3 py-4 rounded-md text-sm font-normal"
                 >
-                  Create Prompt
+                  Login
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setToggleDropdown(false);
-                    signOut();
-                  }}
-                  className="mt-5 w-full black_btn"
+                <Link
+                  href="/signup"
+                  className="navlinks hover:text-white hover:bg-gray-500 px-3 py-4 rounded-md text-sm font-normal"
                 >
-                  Sign Out
-                </button>
+                  Sign Up
+                </Link>
               </div>
-            )}
+            </div>
           </div>
-        ) : (
-          <>
-            {providers &&
-              Object.values(providers).map((provider) => (
-                <button
-                  type="button"
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
-                  className="black_btn"
-                >
-                  Sign in
-                </button>
-              ))}
-          </>
-        )}
+          <div className="block lg:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
+              className="block h-6 w-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              ></path>
+            </svg>
+          </div>
+        </div>
       </div>
     </nav>
   );

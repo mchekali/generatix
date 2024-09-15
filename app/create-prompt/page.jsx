@@ -1,51 +1,75 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import "react-tabs/style/react-tabs.css"; // Import the CSS for react-tabs
+import { getBase64 } from "../../utils/getBase64";
+import Lottie from "react-lottie";
+import animationData from "../../public/assets/animation/loading.json";
 
 const CreatePrompt = () => {
-  const [guidanceScale, setGuidanceScale] = useState(50);
-  const [numInferenceSteps, setNumInferenceSteps] = useState(15);
-  const [promptStrength, setPromptStrength] = useState(0.8);
   const [loading, setLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [controller, setController] = useState(null); // For handling cancellation
+
+  const [selectedGarmentImage, setSelectedGarmentImage] = useState(null);
+  const [garmentImageUrl, setGarmentImageUrl] = useState(null);
+  const [selectedHumanImage, setSelectedHumanImage] = useState(null);
+  const [humanImageUrl, setHumanImageUrl] = useState(null);
   const [prompt, setPrompt] = useState("");
-  // const [negativePrompt, setNegativePrompt] = useState("");
-  const [imageUrl, setImageUrl] = useState(null);
+  const [category, setCategory] = useState("upper_body");
   const [dragActive, setDragActive] = useState(false);
   const [generatedImage, setGeneratedImage] = useState(null);
-  const [upscaledImage, setUpscaledImage] = useState(null);
 
-  const handleGuidanceScaleChange = (event) => {
-    setGuidanceScale(event.target.value);
-  };
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-  const handleNumInferenceStepsChange = (event) => {
-    setNumInferenceSteps(event.target.value);
-  };
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 
-  const handlePromptStrengthChange = (event) => {
-    setPromptStrength(event.target.value);
-  };
+  const startTimeRef = useRef(null);
 
   const handlePromptChange = (event) => {
     setPrompt(event.target.value);
   };
 
-  // const handleNegativePromptChange = (event) => {
-  //   setNegativePrompt(event.target.value);
-  // };
+  const handleCategoryChange = (event) => {
+    setCategory(event.target.value);
+    console.log("Category:", event.target.value);
+  };
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = async (event, setImage, setImageUrl) => {
     const file = event.target.files[0];
+    if (file && file.size > MAX_FILE_SIZE) {
+      alert("File size exceeds the 2 MB limit. Please upload a smaller file.");
+      return;
+    }
+
     if (file) {
       const url = URL.createObjectURL(file);
-      setSelectedImage(url);
+      setImage(url);
+
+      const base64 = await getBase64(file);
+      setImageUrl(base64);
+    }
+  };
+
+  const handleDrop = useCallback((e, setImage, setImageUrl) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file && file.size > MAX_FILE_SIZE) {
+        alert(
+          "File size exceeds the 2 MB limit. Please upload a smaller file.",
+        );
+        return;
+      }
+
+      const url = URL.createObjectURL(file);
+      setImage(url);
 
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -54,7 +78,7 @@ const CreatePrompt = () => {
         setImageUrl(base64data);
       };
     }
-  };
+  }, []);
 
   const handleDrag = useCallback((e) => {
     e.preventDefault();
@@ -66,168 +90,127 @@ const CreatePrompt = () => {
     }
   }, []);
 
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      const url = URL.createObjectURL(file);
-      setSelectedImage(url);
-
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        const base64data = reader.result;
-        setImageUrl(base64data);
-        console.log(imageUrl);
-      };
-    }
-  }, []);
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setGeneratedImage(null);
-  //   setUpscaledImage(null);
-
-  //   if (imageUrl) {
-  //     // Convert base64 to Blob
-  //     const base64Response = await fetch(imageUrl);
-  //     const blob = await base64Response.blob();
-  //     const file = new File([blob], `image-${Date.now()}.png`, {
-  //       type: blob.type,
-  //     });
-
-  //     // Create FormData object and append file
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-
-  //     // Upload image to your VPS server
-  //     const response = await fetch("https://www.remedeasy.com/node/upload", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     const data = await response.json();
-  //     const publicImageUrl = data.imageUrl;
-  //     console.log("publicImageUrl: ", publicImageUrl);
-
-  //     // Send public URL to your Replicate endpoint
-  //     const generatedResponse = await fetch("/api/generate", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         guidanceScale,
-  //         numInferenceSteps,
-  //         promptStrength,
-  //         prompt,
-  //         imageUrl: publicImageUrl,
-  //       }),
-  //     });
-  //     const generatedData = await generatedResponse.json();
-  //     setGeneratedImage(generatedData.output);
-  //     console.log("Replicate API response:", generatedData.output);
-
-  //     // Call API to upscale image
-  //     // const upscaledResponse = await fetch("/api/upscale", {
-  //     //   method: "POST",
-  //     //   headers: {
-  //     //     "Content-Type": "application/json",
-  //     //   },
-  //     //   body: JSON.stringify({ image: generatedData.output }),
-  //     // });
-  //     // console.log("generatedData.output = ", generatedData.output);
-  //     // const upscaledData = await upscaledResponse.json();
-  //     // setUpscaledImage(upscaledData.output);
-
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!garmentImageUrl || !humanImageUrl) {
+      console.log("Both images are required");
+      return;
+    }
     setLoading(true);
     setGeneratedImage(null);
-    setUpscaledImage(null);
+    startTimeRef.current = Date.now(); // Set the start time using ref
 
-    if (imageUrl) {
-      try {
-        // Convert base64 to Blob
-        const base64Response = await fetch(imageUrl);
-        const blob = await base64Response.blob();
-        const file = new File([blob], `image-${Date.now()}.png`, {
-          type: blob.type,
-        });
+    const abortController = new AbortController();
+    setController(abortController);
 
-        // Create FormData object and append file
-        const formData = new FormData();
-        formData.append("file", file);
+    try {
+      setGenerating(true);
 
-        // Upload image to your VPS server
-        const response = await fetch("https://www.remedeasy.com/node/upload", {
-          method: "POST",
-          body: formData,
-        });
+      const crop = await checkImageAspectRatio(humanImageUrl);
+      const force_dc = checkForceDc(category);
 
-        const data = await response.json();
-        const publicImageUrl = data.imageUrl;
-        console.log("publicImageUrl: ", publicImageUrl);
+      console.log("Prompt:", prompt);
+      console.log("Crop:", crop);
+      console.log("Force DC:", force_dc);
+      console.log("Category:", category);
 
-        // Send public URL to your Replicate endpoint
-        const generatedResponse = await fetch("/api/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            guidanceScale: parseFloat(guidanceScale), // Convert to number
-            numInferenceSteps: parseInt(numInferenceSteps, 10), // Convert to integer
-            promptStrength: parseFloat(promptStrength), // Convert to number
-            prompt,
-            imageUrl: publicImageUrl,
-          }),
-        });
+      const generatedResponse = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          garmentImageBase64: garmentImageUrl,
+          humanImageBase64: humanImageUrl,
+          prompt,
+          crop,
+          force_dc,
+          category,
+        }),
+        signal: abortController.signal,
+      });
 
-        if (!generatedResponse.ok) {
-          throw new Error("Error generating image");
-        }
-
-        const generatedData = await generatedResponse.json();
-        setGeneratedImage(generatedData.output);
-        console.log("Replicate API response:", generatedData.output);
-
-        // Call API to upscale image
-        // const upscaledResponse = await fetch("/api/upscale", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({ image: generatedData.output }),
-        // });
-        // console.log("generatedData.output = ", generatedData.output);
-        // const upscaledData = await upscaledResponse.json();
-        // setUpscaledImage(upscaledData.output);
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
+      if (!generatedResponse.ok) {
+        const errorText = await generatedResponse.text();
+        throw new Error(`Error generating image: ${errorText}`);
       }
+
+      const generatedData = await generatedResponse.json();
+      setGeneratedImage(generatedData.output);
+      console.log("Image generated successfully:", generatedData.output);
+
+      // Calculate elapsed time using ref
+      setElapsedTime(((Date.now() - startTimeRef.current) / 1000).toFixed(1));
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("Generation canceled");
+      } else {
+        console.error("Error:", error);
+      }
+    } finally {
+      setController(null);
+      setLoading(false);
+      setGenerating(false);
     }
   };
 
+  const checkImageAspectRatio = (imageUrl) => {
+    return new Promise((resolve) => {
+      const img = new window.Image(); // Use native Image object
+      img.onload = () => {
+        const aspectRatio = img.width / img.height;
+        const isNot3to4 = Math.abs(aspectRatio - 3 / 4) > 0.01; // Allow for small rounding errors
+        resolve(isNot3to4);
+      };
+      img.onerror = () => {
+        resolve(true); // Assume it's not 3:4 if there's an error loading the image
+      };
+      img.src = imageUrl;
+    });
+  };
+
+  const checkForceDc = (category) => {
+    return category === "dresses";
+  };
+
+  // Cancel function
+  const handleCancel = () => {
+    if (controller) {
+      controller.abort();
+    }
+  };
+
+  const downloadImage = () => {
+    if (!generatedImage) return;
+
+    const link = document.createElement("a");
+    link.href = generatedImage;
+    link.download = "generated_image.png";
+    link.target = "_self"; // Ensure it does not open a new window
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
   return (
-    <section className="w-full max-w-full flex flex-col bg-gray-300">
+    <section className="w-full flex flex-col bg-gray-700 min-h-screen text-gray-100">
       {/* Main content */}
-      <div className=" mx-2 px-4 py-6 ">
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
-          {/* First column (1/5) */}
-          <div className="lg:col-span-2">
+      <div className="w-full py-8 px-4 sm:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* First column (1/3) */}
+          <div className="lg:col-span-3 bg-gray-800 p-6 rounded-2xl shadow-lg">
             <form onSubmit={handleSubmit}>
-              <h2 className="text-lg font-semibold mb-2">Parameters</h2>
-              <div className="flex justify-center items-center py-1 rounded-lg bginput mb-4">
+              <h2 className="text-lg font-semibold mb-4">Parameters</h2>
+              <div className="flex justify-center items-center rounded-lg bg-gray-700 mb-6">
                 <img
                   alt="tokens"
                   className="w-8 mr-2"
@@ -235,253 +218,220 @@ const CreatePrompt = () => {
                 />
                 0
               </div>
-
-              {/* dropzone-file */}
+              {/* Garment Image */}
               <div>
-                <label className="flex items-center">
-                  <span className="font-satoshi text-base text-black mr-2">
-                    Image <span className="text-red-500">*</span>
+                <label className="flex items-center mb-2">
+                  <span className="font-satoshi text-sm text-gray-300 mr-2">
+                    Garment Image <span className="text-red-500">*</span>
                   </span>
                 </label>
                 <div
-                  className={`flex flex-col items-center justify-center w-full h-32 border bginput rounded-lg cursor-pointer text-black mt-1 mb-4 ${
+                  className={`flex flex-col items-center justify-center w-full h-20 border bg-gray-700 rounded-lg cursor-pointer text-gray-300 ${
                     dragActive ? "border-dashed border-blue-600" : ""
                   }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
                   onDragOver={handleDrag}
-                  onDrop={handleDrop}
+                  onDrop={(e) =>
+                    handleDrop(e, setSelectedGarmentImage, setGarmentImageUrl)
+                  }
                 >
                   <label
-                    htmlFor="dropzone-file"
+                    htmlFor="dropzone-garment-file"
                     className="w-full h-full flex flex-col items-center justify-center pt-5 pb-6 cursor-pointer"
                   >
                     <div className="flex flex-col items-center justify-center">
-                      <p className="mb-2 text-sm">
-                        <span className="font-semibold">Click to upload</span>{" "}
-                        or drag and drop
+                      <p className="mb-2 text-xs">
+                        Click to upload or drag and drop
                       </p>
                       <p className="text-xs">
-                        (Format PNG or JPG, Max size: 2 MB)
+                        (Format PNG, WEBP or JPG, Max size: 2 MB)
                       </p>
                     </div>
                   </label>
                   <input
                     type="file"
-                    id="dropzone-file"
+                    id="dropzone-garment-file"
                     className="hidden"
-                    onChange={handleImageUpload}
-                    accept="image/png, image/jpeg"
+                    onChange={(e) =>
+                      handleImageUpload(
+                        e,
+                        setSelectedGarmentImage,
+                        setGarmentImageUrl,
+                      )
+                    }
+                    accept="image/png, image/jpeg, image/webp"
                   />
+                </div>
+              </div>
+              {/* Category */}
+              <div className="mt-6">
+                <label className="flex items-center mb-2">
+                  <span className="font-satoshi text-sm text-gray-300 mr-2">
+                    Category <span className="text-red-500">*</span>
+                  </span>
+                </label>
+                <div className="tw-select">
+                  <select
+                    id="category"
+                    className="w-full border p-2 border-gray-300 bg-gray-700 text-xs text-white rounded-lg"
+                    name="category"
+                    onChange={handleCategoryChange}
+                  >
+                    <option value="upper_body">Upper body</option>
+                    <option value="lower_body">Lower body</option>
+                    <option value="dresses">Dresses</option>
+                  </select>
                 </div>
               </div>
 
               {/* Prompt */}
-              <div className="mb-4">
+              <div className="mt-6">
                 <label>
-                  <span className="font-satoshi text-base text-black ">
-                    Prompt <span className="text-red-500">*</span>
+                  <span className="font-satoshi text-sm text-gray-300">
+                    Garment description
                   </span>
-
                   <textarea
                     value={prompt}
                     onChange={handlePromptChange}
-                    placeholder="Write your prompt here"
-                    required
-                    className="form_textarea bginput "
+                    placeholder="Description of garment e.g. Red, white and black striped sweater"
+                    style={{ fontSize: "12px" }}
+                    className="form_textarea bg-gray-700 text-white mt-2 p-2 rounded-lg w-full"
+                    rows="2"
                   />
                 </label>
               </div>
 
-              {/* Guidance Scale */}
-              <div className="mb-4">
-                <label className="flex items-center">
-                  <span className="font-satoshi text-base text-black mr-2">
-                    Guidance scale
+              {/* Human Image */}
+              <div className="mt-6">
+                <label className="flex items-center mb-2">
+                  <span className="font-satoshi text-sm text-gray-300 mr-2">
+                    Person image <span className="text-red-500">*</span>
                   </span>
-                  <div className="relative group flex items-center">
-                    <FontAwesomeIcon
-                      icon={faInfoCircle}
-                      className="w-4 h-4 text-gray-500 cursor-pointer"
-                    />
-                    <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-48 p-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
-                      This is a setting that tells the AI how strongly to follow
-                      your text prompt. A higher number means the AI will stick
-                      more closely to what you described in your prompt. <br />
-                      Default value: 7.5 <br />
-                      Explanation: This is a balanced value that ensures the AI
-                      follows the text prompt well without being too rigid or
-                      too loose.
-                    </div>
-                  </div>
                 </label>
-                <div className="flex items-center mt-2">
+                <div
+                  className={`flex flex-col items-center justify-center w-full h-20 border bg-gray-700 rounded-lg cursor-pointer text-gray-300 ${
+                    dragActive ? "border-dashed border-blue-600" : ""
+                  }`}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={(e) =>
+                    handleDrop(e, setSelectedHumanImage, setHumanImageUrl)
+                  }
+                >
+                  <label
+                    htmlFor="dropzone-human-file"
+                    className="w-full h-full flex flex-col items-center justify-center pt-5 pb-6 cursor-pointer"
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <p className="mb-2 text-xs">
+                        Click to upload or drag and drop
+                      </p>
+                      <p className="text-xs">
+                        (Format PNG, WEBP or JPG, Max size: 2 MB)
+                      </p>
+                    </div>
+                  </label>
                   <input
-                    className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
-                    type="range"
-                    min="1"
-                    max="50"
-                    step="0.01"
-                    value={guidanceScale}
-                    onChange={handleGuidanceScaleChange}
-                  />
-                  <input
-                    className="w-16 ml-2 p-1 bg-gray-200 rounded-lg border border-gray-400"
-                    type="number"
-                    min="1"
-                    max="50"
-                    step="0.01"
-                    value={guidanceScale}
-                    onChange={handleGuidanceScaleChange}
+                    type="file"
+                    id="dropzone-human-file"
+                    className="hidden"
+                    onChange={(e) =>
+                      handleImageUpload(
+                        e,
+                        setSelectedHumanImage,
+                        setHumanImageUrl,
+                      )
+                    }
+                    accept="image/png, image/jpeg, image/webp"
                   />
                 </div>
               </div>
+              <div className="flex items-center justify-center mt-4">
+                <button
+                  type="submit"
+                  className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center w-40"
+                  disabled={generating}
+                >
+                  {loading ? "Processing..." : "Run"}
+                </button>
 
-              {/* Num Inference Steps */}
-              <div className="mb-4">
-                <label className="flex items-center">
-                  <span className="font-satoshi text-base text-black mr-2">
-                    Num inference steps
-                  </span>
-                  <div className="relative group flex items-center">
-                    <FontAwesomeIcon
-                      icon={faInfoCircle}
-                      className="w-4 h-4 text-gray-500 cursor-pointer"
-                    />
-                    <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-48 p-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
-                      This is like the number of steps the AI takes to refine
-                      the design. More steps can lead to a more detailed and
-                      polished result, but it might take longer to process.{" "}
-                      <br />
-                      Default value: 7.5 <br />
-                      Explanation: This is a balanced value that ensures the AI
-                      follows the text prompt well without being too rigid or
-                      too loose.
-                    </div>
-                  </div>
-                </label>
-                <div className="flex items-center mt-2">
-                  <input
-                    className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
-                    type="range"
-                    min="1"
-                    max="500"
-                    step="1"
-                    value={numInferenceSteps}
-                    onChange={handleNumInferenceStepsChange}
-                  />
-                  <input
-                    className="w-16 ml-2 p-1 bg-gray-200 rounded-lg border border-gray-400"
-                    type="number"
-                    min="1"
-                    max="500"
-                    step="1"
-                    value={numInferenceSteps}
-                    onChange={handleNumInferenceStepsChange}
-                  />
-                </div>
+                <button
+                  type="button"
+                  className="mt-4 ml-4 bg-gray-600 text-white py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-black flex items-center justify-center w-40"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
               </div>
-
-              {/* Prompt Strength */}
-              <div className="mb-4">
-                <label className="flex items-center">
-                  <span className="font-satoshi text-base text-black mr-2">
-                    Prompt strength
-                  </span>
-                  <div className="relative group flex items-center">
-                    <FontAwesomeIcon
-                      icon={faInfoCircle}
-                      className="w-4 h-4 text-gray-500 cursor-pointer"
-                    />
-                    <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-48 p-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100">
-                      This controls how much of the original image gets changed
-                      when you use your prompt. If you set it to 1.0, the AI
-                      will completely change the image according to your prompt.
-                      Lower values will keep more of the original image intact.{" "}
-                      <br />
-                      Default value: 7.5 <br />
-                      Explanation: This is a balanced value that ensures the AI
-                      follows the text prompt well without being too rigid or
-                      too loose.
-                    </div>
-                  </div>
-                </label>
-                <div className="flex items-center mt-2">
-                  <input
-                    className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={promptStrength}
-                    onChange={handlePromptStrengthChange}
-                  />
-                  <input
-                    className="w-16 ml-2 p-1 bg-gray-200 rounded-lg border border-gray-400"
-                    type="number"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={promptStrength}
-                    onChange={handlePromptStrengthChange}
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="mt-4 mx-auto bg-blue-500 text-white py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center"
-                disabled={loading}
-              >
-                <img
-                  src="/assets/icons/wand.png"
-                  alt=""
-                  width={28}
-                  height={28}
-                  className="mr-2"
-                />
-                {loading ? "Uploading..." : "Generate"}
-              </button>
             </form>
           </div>
 
-          {/* Second column (4/5) */}
-          <div className="lg:col-span-4 flex flex-col">
-            <h2 className="text-lg font-semibold mb-2">Input</h2>
-
-            <div className="rounded-xl shadow-md relative">
-              {selectedImage && (
+          {/* Second column (1/3) */}
+          <div className="lg:col-span-4 bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col">
+            {selectedGarmentImage && (
+              <div className="rounded-xl relative bg-gray-800 p-4 shadow-lg flex justify-center">
                 <>
                   <Image
-                    src={selectedImage}
-                    alt="Input image"
+                    src={selectedGarmentImage}
+                    alt="Garment image"
                     height={0}
                     width={0}
                     sizes="100vw"
-                    className="w-auto rounded-t-xl"
+                    className="w-auto rounded-xl"
                   />
-                  <span className="absolute top-2 left-2 bg-black text-white px-2 py-1 rounded-md text-sm">
-                    BEFORE
-                  </span>
                 </>
-              )}
-            </div>
+              </div>
+            )}
+            {selectedHumanImage && (
+              <div className="rounded-xl relative bg-gray-800 p-4 shadow-lg mt-4">
+                <>
+                  <Image
+                    src={selectedHumanImage}
+                    alt="Human image"
+                    height={0}
+                    width={0}
+                    sizes="100vw"
+                    className="w-auto rounded-xl"
+                  />
+                </>
+              </div>
+            )}
           </div>
 
-          {/* Third column (4/5) */}
-          <div className="lg:col-span-4 flex flex-col">
-            <h2 className="text-lg font-semibold mb-2">Output</h2>
-            {generatedImage && (
-              <div className="rounded-xl shadow-md relative">
-                <img
-                  src={generatedImage}
-                  alt="Output image"
-                  className="w-full h-auto rounded-t-xl"
-                />
-                <span className="absolute top-2 left-2 bg-black text-white px-2 py-1 rounded-md text-sm">
-                  AFTER
-                </span>
+          {/* Third column (1/3) */}
+          <div className="lg:col-span-5 bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col">
+            {generating ? (
+              <div className="flex items-center justify-center w-full h-[100vh] text-blue dark:text-gray-100 dark:bg-gray-950">
+                <div className="relative p-4 max-w-sm mx-auto">
+                  <Lottie options={defaultOptions} height={200} width={200} />
+                  <span className="text-gray-300 text-sm text-center w-full block">
+                    Generating your image...
+                  </span>
+                </div>
               </div>
+            ) : (
+              generatedImage && (
+                <div className="relative rounded-xl bg-gray-800 p-4 shadow-lg">
+                  <img
+                    src={generatedImage}
+                    alt="Output image"
+                    className="w-full h-auto rounded-xl"
+                  />
+                  <span className="text-gray-300 text-xs text-center w-full block mt-2">
+                    Generated in {elapsedTime} seconds
+                  </span>
+                  <button
+                    className="absolute bottom-5 right-5 bg-gray-700 text-white p-2 rounded-full flex items-center justify-center"
+                    onClick={downloadImage}
+                    disabled={!generatedImage}
+                    title="Download Image"
+                  >
+                    <FontAwesomeIcon icon={faDownload} className="w-6 h-6" />
+                  </button>
+                </div>
+              )
             )}
           </div>
         </div>
